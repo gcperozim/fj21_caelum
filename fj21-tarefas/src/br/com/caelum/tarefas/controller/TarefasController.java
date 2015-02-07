@@ -3,6 +3,7 @@ package br.com.caelum.tarefas.controller;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,6 +15,13 @@ import br.com.caelum.tarefas.modelo.Tarefa;
 
 @Controller
 public class TarefasController {
+	
+	private final JdbcTarefaDao dao;
+	
+	@Autowired
+	public TarefasController(JdbcTarefaDao dao) {
+		this.dao = dao;
+	}
 	
 	@RequestMapping("novaTarefa")
 	public String form() {
@@ -27,7 +35,6 @@ public class TarefasController {
 			return "tarefa/formulario";
 		}
 		
-		JdbcTarefaDao dao = new JdbcTarefaDao();
 		dao.adiciona(tarefa);
 		return "tarefa/adicionada";
 	}
@@ -35,7 +42,6 @@ public class TarefasController {
 	@RequestMapping("listaTarefas")
 	public String lista(Model model){
 		
-		JdbcTarefaDao dao = new JdbcTarefaDao();
 		model.addAttribute("tarefa", dao.lista());
 		return "tarefa/lista";
 		
@@ -44,7 +50,6 @@ public class TarefasController {
 	@RequestMapping("removeTarefa")
 	public String remove(Tarefa tarefa){
 		
-		JdbcTarefaDao dao = new JdbcTarefaDao();
 		dao.remove(tarefa);
 		return "redirect:listaTarefas";
 	}
@@ -52,7 +57,6 @@ public class TarefasController {
 	@RequestMapping("mostraTarefa")
 	public String mostra(Long id, Model model){
 		
-		JdbcTarefaDao dao = new JdbcTarefaDao();
 		model.addAttribute("tarefa",dao.buscaPorId(id));
 		return "tarefa/mostra";
 	}
@@ -60,7 +64,6 @@ public class TarefasController {
 	@RequestMapping("alteraTarefa")
 	public String altera(Tarefa tarefa){
 		
-		JdbcTarefaDao dao = new JdbcTarefaDao();
 		dao.altera(tarefa);
 		return "redirect:listaTarefas";
 	}
@@ -68,7 +71,6 @@ public class TarefasController {
 	@ResponseBody
 	@RequestMapping("finalizaTarefa")
 	public void finaliza(Long id, HttpServletResponse response) {
-	  JdbcTarefaDao dao = new JdbcTarefaDao();
 	  dao.finaliza(id);
 	  response.setStatus(200);
 	}
